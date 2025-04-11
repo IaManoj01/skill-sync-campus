@@ -282,10 +282,14 @@ const Analytics = () => {
                       <Bar
                         dataKey="days"
                         name="Days before deadline"
-                        fill={(data) => (data.days >= 0 ? "#4CAF50" : "#F44336")}
+                        fill="#4CAF50"
                       >
+                        {/* Use Cell components to conditionally color the bars based on values */}
                         {weeklyActivityData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.hours > 0 ? "#4CAF50" : "#F44336"} />
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={entry.hours > 0 ? "#4CAF50" : "#F44336"} 
+                          />
                         ))}
                       </Bar>
                     </BarChart>
