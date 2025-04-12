@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Pages
 import Index from "./pages/Index";
@@ -17,9 +17,13 @@ import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import StudentDashboard from "./pages/student/StudentDashboard";
+import UserManagement from "./pages/admin/UserManagement";
+import AdminSettings from "./pages/admin/AdminSettings";
+import StudentProgress from "./pages/student/StudentProgress";
 
-// Layout
+// Components
 import DashboardLayout from "./components/layouts/DashboardLayout";
+import AiAssistant from "./components/AiAssistant";
 import { useAuth } from "./contexts/AuthContext";
 import { useEffect } from "react";
 
@@ -68,6 +72,8 @@ const App = () => (
             <Route path="coding" element={<CodingChallenges />} />
             <Route path="coding/:challengeId" element={<CodingChallenge />} />
             <Route path="analytics" element={<Analytics />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="settings" element={<AdminSettings />} />
           </Route>
           
           {/* Student routes */}
@@ -81,10 +87,14 @@ const App = () => (
             <Route path="courses/:courseId" element={<CourseDetail />} />
             <Route path="coding" element={<CodingChallenges />} />
             <Route path="coding/:challengeId" element={<CodingChallenge />} />
+            <Route path="progress" element={<StudentProgress />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />
         </Routes>
+        
+        {/* AI Assistant available on all pages */}
+        <AiAssistant />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
