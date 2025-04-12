@@ -14,6 +14,7 @@ import CodingChallenges from "./pages/CodingChallenges";
 import CodingChallenge from "./pages/CodingChallenge";
 import Analytics from "./pages/Analytics";
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import StudentDashboard from "./pages/student/StudentDashboard";
@@ -58,6 +59,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/" element={<Index />} />
           
           {/* Admin routes */}
