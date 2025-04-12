@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // Pages
 import Index from "./pages/Index";
@@ -19,8 +19,10 @@ import NotFound from "./pages/NotFound";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import UserManagement from "./pages/admin/UserManagement";
+import UserData from "./pages/admin/UserData";
 import AdminSettings from "./pages/admin/AdminSettings";
 import StudentProgress from "./pages/student/StudentProgress";
+import CourseSelection from "./pages/student/CourseSelection";
 
 // Components
 import DashboardLayout from "./components/layouts/DashboardLayout";
@@ -31,19 +33,28 @@ import { useEffect } from "react";
 // Role-based route component
 const RoleBasedRoute = ({ children, requiredRole }: { children: React.ReactNode, requiredRole: 'admin' | 'student' }) => {
   const userRole = localStorage.getItem('userRole') || 'student';
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   
   useEffect(() => {
     // If no user is logged in, we won't redirect as the login component will handle that
-    if (!user) return;
+    if (isLoading) return;
+    
+    if (!user) {
+      window.location.href = "/login";
+      return;
+    }
     
     // If user has the wrong role, redirect to the proper portal
     if (userRole !== requiredRole) {
       window.location.href = `/${userRole}`;
     }
-  }, [user, userRole, requiredRole]);
+  }, [user, userRole, requiredRole, isLoading]);
 
-  if (!user) return null;
+  if (isLoading) return <div className="flex items-center justify-center h-screen">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+  </div>;
+  
+  if (!user) return <Navigate to="/login" />;
   
   // If user has the correct role, render the children
   return <>{children}</>;
@@ -75,6 +86,7 @@ const App = () => (
             <Route path="coding/:challengeId" element={<CodingChallenge />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="users" element={<UserManagement />} />
+            <Route path="user-data" element={<UserData />} />
             <Route path="settings" element={<AdminSettings />} />
           </Route>
           
@@ -86,6 +98,7 @@ const App = () => (
           }>
             <Route index element={<StudentDashboard />} />
             <Route path="courses" element={<Courses />} />
+            <Route path="course-selection" element={<CourseSelection />} />
             <Route path="courses/:courseId" element={<CourseDetail />} />
             <Route path="coding" element={<CodingChallenges />} />
             <Route path="coding/:challengeId" element={<CodingChallenge />} />
