@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Award, BookOpen, Code, Clock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const StudentProgress = () => {
   // Mock data for demonstration
