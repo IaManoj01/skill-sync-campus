@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { UserCog, UserRound, BookOpen, Users } from "lucide-react";
+import { UserCog, UserRound, BookOpen, Users, Code } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
