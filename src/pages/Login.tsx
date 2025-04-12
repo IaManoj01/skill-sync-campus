@@ -8,46 +8,52 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Redirect if already logged in
-  if (user) {
-    const role = localStorage.getItem('userRole');
-    navigate(role === 'admin' ? '/admin' : '/student');
-    return null;
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage(null);
     
     if (!email || !password) {
-      setErrorMessage("Please fill in all fields");
+      toast({
+        title: "Error",
+        description: "Please fill in all fields.",
+        variant: "destructive",
+      });
       return;
     }
     
     setIsLoading(true);
     
     try {
-      const { success, error } = await login(email, password);
+      const success = await login(email, password);
       
       if (success) {
-        // Navigation will happen through the auth state change in AuthContext
-      } else if (error) {
-        setErrorMessage(error);
+        toast({
+          title: "Success",
+          description: "You are now logged in.",
+        });
+        navigate("/");
+      } else {
+        toast({
+          title: "Error",
+          description: "Invalid credentials. Please try again.",
+          variant: "destructive",
+        });
       }
     } catch (error) {
-      setErrorMessage("An unexpected error occurred. Please try again.");
+      toast({
+        title: "Error",
+        description: "An error occurred. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -82,19 +88,13 @@ const Login = () => {
           </CardHeader>
           <form onSubmit={handleSubmit}>
             <CardContent className="space-y-4">
-              {errorMessage && (
-                <Alert variant="destructive">
-                  <AlertDescription>{errorMessage}</AlertDescription>
-                </Alert>
-              )}
-              
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
                   <Input
                     id="email"
                     type="email"
-                    placeholder="your.email@university.edu"
+                    placeholder="alex.johnson@university.edu"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
@@ -143,6 +143,9 @@ const Login = () => {
                   <Link to="/register" className="text-campus-blue hover:underline">
                     Register
                   </Link>
+                </p>
+                <p className="text-gray-500">
+                  For demo: alex.johnson@university.edu / password
                 </p>
               </div>
             </CardFooter>

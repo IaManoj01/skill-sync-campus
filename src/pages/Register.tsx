@@ -10,13 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { CheckCircle2, User, Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 // Define form schema with validations
 const registerSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  fullName: z.string().min(2, "Full name must be at least 2 characters"),
+  name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters")
@@ -33,21 +30,11 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const { register: registerUser, user } = useAuth();
-  
-  // Redirect if already logged in
-  if (user) {
-    const role = localStorage.getItem('userRole');
-    navigate(role === 'admin' ? '/admin' : '/student');
-    return null;
-  }
   
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      username: "",
-      fullName: "",
+      name: "",
       email: "",
       password: "",
       confirmPassword: ""
@@ -55,22 +42,29 @@ const Register = () => {
   });
 
   const onSubmit = async (values: RegisterFormValues) => {
-    setErrorMessage(null);
     setIsLoading(true);
     
     try {
-      const { success, error } = await registerUser(values.email, values.password, {
-        username: values.username,
-        full_name: values.fullName
+      // This is a placeholder for Supabase integration
+      // We'll just show a success message for now
+      console.log("Registration values:", values);
+      
+      toast({
+        title: "Account created",
+        description: "Please log in with your new account",
       });
       
-      if (success) {
-        // Navigation will happen through auth state change in AuthContext
-      } else if (error) {
-        setErrorMessage(error);
-      }
+      // Navigate to login page after successful registration
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
     } catch (error) {
-      setErrorMessage("An unexpected error occurred. Please try again.");
+      console.error("Registration error:", error);
+      toast({
+        title: "Error",
+        description: "There was a problem creating your account. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -106,32 +100,9 @@ const Register = () => {
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <CardContent className="space-y-4">
-                {errorMessage && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{errorMessage}</AlertDescription>
-                  </Alert>
-                )}
-                
                 <FormField
                   control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <Input placeholder="johndoe" {...field} />
-                          <User className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="fullName"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Full Name</FormLabel>
