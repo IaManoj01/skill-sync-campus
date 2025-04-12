@@ -1,22 +1,6 @@
 
-import { useState, useEffect } from 'react';
-import { Outlet, useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  BookOpen,
-  Code,
-  BarChart3,
-  User,
-  LogOut,
-  Menu,
-  X,
-  Bell,
-  Settings,
-  Users,
-  Layers
-} from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,8 +9,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/contexts/AuthContext';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
+import {
+  BarChart3,
+  Bell,
+  BookOpen,
+  Code,
+  Layers,
+  LogOut,
+  Menu,
+  Settings,
+  User,
+  Users,
+  X
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
 interface DashboardLayoutProps {
   isAdmin?: boolean;
@@ -79,12 +79,14 @@ const DashboardLayout = ({ isAdmin = false }: DashboardLayoutProps) => {
     { icon: <Code className="w-5 h-5 mr-3" />, label: 'Coding Challenges', path: `${baseUrl}/coding` },
     { icon: <BarChart3 className="w-5 h-5 mr-3" />, label: 'Analytics', path: `${baseUrl}/analytics` },
     { icon: <Settings className="w-5 h-5 mr-3" />, label: 'Settings', path: `${baseUrl}/settings` },
+    { icon: <User className="w-5 h-5 mr-3" />, label: 'Profile', path: `${baseUrl}/profile` },
   ];
 
   const studentNavItems = [
     { icon: <BookOpen className="w-5 h-5 mr-3" />, label: 'My Courses', path: `${baseUrl}/courses` },
     { icon: <Code className="w-5 h-5 mr-3" />, label: 'Coding Challenges', path: `${baseUrl}/coding` },
     { icon: <Layers className="w-5 h-5 mr-3" />, label: 'My Progress', path: `${baseUrl}/progress` },
+    { icon: <User className="w-5 h-5 mr-3" />, label: 'Profile', path: `${baseUrl}/profile` },
   ];
 
   const navItems = isAdmin ? adminNavItems : studentNavItems;

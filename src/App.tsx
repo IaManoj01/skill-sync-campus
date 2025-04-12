@@ -20,6 +20,8 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import UserManagement from "./pages/admin/UserManagement";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentProgress from "./pages/student/StudentProgress";
+import AdminProfile from "./pages/admin/Profile";
+import StudentProfile from "./pages/student/Profile";
 
 // Components
 import { useEffect } from "react";
@@ -74,6 +76,7 @@ const App = () => (
             <Route path="analytics" element={<Analytics />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="settings" element={<AdminSettings />} />
+            <Route path="profile" element={<AdminProfile />} />
           </Route>
           
           {/* Student routes */}
@@ -88,6 +91,7 @@ const App = () => (
             <Route path="coding" element={<CodingChallenges />} />
             <Route path="coding/:challengeId" element={<CodingChallenge />} />
             <Route path="progress" element={<StudentProgress />} />
+            <Route path="profile" element={<StudentProfile />} />
           </Route>
           
           <Route path="*" element={<NotFound />} />
