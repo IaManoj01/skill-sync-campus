@@ -12,7 +12,10 @@ import {
   LogOut,
   Menu,
   X,
-  Bell
+  Bell,
+  Settings,
+  Users,
+  Layers
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -23,12 +26,22 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useToast } from '@/hooks/use-toast';
 
-const DashboardLayout = () => {
+interface DashboardLayoutProps {
+  isAdmin?: boolean;
+}
+
+const DashboardLayout = ({ isAdmin = false }: DashboardLayoutProps) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
+  
+  // Get role from localStorage
+  const userRole = localStorage.getItem('userRole') || 'student';
+  const baseUrl = isAdmin ? '/admin' : '/student';
 
   useEffect(() => {
     // If not logged in, redirect to login page
@@ -44,16 +57,37 @@ const DashboardLayout = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    localStorage.removeItem('userRole'); // Clear role on logout
+    toast({
+      title: "Logged out",
+      description: "You have been successfully logged out.",
+    });
+    navigate('/');
+  };
+
+  const handleSwitchPortal = () => {
+    localStorage.removeItem('userRole'); // Clear role before switching
+    navigate('/');
   };
 
   if (!user) return null;
 
-  const navItems = [
-    { icon: <BookOpen className="w-5 h-5 mr-3" />, label: 'Courses', path: '/courses' },
-    { icon: <Code className="w-5 h-5 mr-3" />, label: 'Coding Challenges', path: '/coding' },
-    { icon: <BarChart3 className="w-5 h-5 mr-3" />, label: 'Analytics', path: '/analytics' },
+  // Different navigation items based on role
+  const adminNavItems = [
+    { icon: <Users className="w-5 h-5 mr-3" />, label: 'Manage Users', path: `${baseUrl}/users` },
+    { icon: <BookOpen className="w-5 h-5 mr-3" />, label: 'Courses', path: `${baseUrl}/courses` },
+    { icon: <Code className="w-5 h-5 mr-3" />, label: 'Coding Challenges', path: `${baseUrl}/coding` },
+    { icon: <BarChart3 className="w-5 h-5 mr-3" />, label: 'Analytics', path: `${baseUrl}/analytics` },
+    { icon: <Settings className="w-5 h-5 mr-3" />, label: 'Settings', path: `${baseUrl}/settings` },
   ];
+
+  const studentNavItems = [
+    { icon: <BookOpen className="w-5 h-5 mr-3" />, label: 'My Courses', path: `${baseUrl}/courses` },
+    { icon: <Code className="w-5 h-5 mr-3" />, label: 'Coding Challenges', path: `${baseUrl}/coding` },
+    { icon: <Layers className="w-5 h-5 mr-3" />, label: 'My Progress', path: `${baseUrl}/progress` },
+  ];
+
+  const navItems = isAdmin ? adminNavItems : studentNavItems;
 
   return (
     <div className="flex h-screen bg-gray-50">
@@ -79,9 +113,9 @@ const DashboardLayout = () => {
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        {/* Logo */}
-        <div className="flex items-center justify-center h-16 border-b">
-          <Link to="/" className="flex items-center">
+        {/* Logo with portal indicator */}
+        <div className="flex flex-col items-center justify-center h-24 border-b">
+          <Link to={baseUrl} className="flex items-center">
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -89,13 +123,16 @@ const DashboardLayout = () => {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-8 h-8 text-campus-blue mr-2"
+              className="w-8 h-8 text-blue-600 mr-2"
             >
               <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
               <path d="M6 12v5c3 3 9 3 12 0v-5" />
             </svg>
             <span className="font-bold text-xl text-gray-800">Campus Bridge</span>
           </Link>
+          <span className={`text-sm mt-1 px-3 py-1 rounded-full ${isAdmin ? 'bg-amber-100 text-amber-800' : 'bg-green-100 text-green-800'}`}>
+            {isAdmin ? 'Admin Portal' : 'Student Portal'}
+          </span>
         </div>
 
         {/* Navigation */}
@@ -103,7 +140,7 @@ const DashboardLayout = () => {
           <ul className="space-y-1 px-3">
             <li>
               <Link
-                to="/"
+                to={baseUrl}
                 className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100"
               >
                 <svg
@@ -135,6 +172,25 @@ const DashboardLayout = () => {
                 </Link>
               </li>
             ))}
+
+            {/* Option to switch portals */}
+            <li className="mt-6">
+              <Button 
+                variant="outline" 
+                className="w-full justify-start" 
+                onClick={handleSwitchPortal}
+              >
+                <svg 
+                  className="w-5 h-5 mr-3" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+                Switch Portal
+              </Button>
+            </li>
           </ul>
         </nav>
 
@@ -148,7 +204,7 @@ const DashboardLayout = () => {
               </Avatar>
               <div className="ml-3">
                 <p className="text-sm font-medium text-gray-700">{user.name}</p>
-                <p className="text-xs text-gray-500 capitalize">{user.role}</p>
+                <p className="text-xs text-gray-500 capitalize">{isAdmin ? 'Administrator' : 'Student'}</p>
               </div>
             </div>
             <Button
@@ -168,7 +224,9 @@ const DashboardLayout = () => {
         {/* Top navbar */}
         <header className="bg-white shadow-sm py-4 px-6">
           <div className="flex justify-between items-center">
-            <h1 className="text-xl font-semibold text-gray-800">Campus Bridge</h1>
+            <h1 className="text-xl font-semibold text-gray-800">
+              {isAdmin ? 'Admin Dashboard' : 'Student Dashboard'}
+            </h1>
             <div className="flex items-center space-x-4">
               <Button variant="outline" size="icon">
                 <Bell className="w-5 h-5" />
@@ -189,6 +247,18 @@ const DashboardLayout = () => {
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSwitchPortal}>
+                    <svg 
+                      className="mr-2 h-4 w-4"
+                      fill="none" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                    </svg>
+                    <span>Switch Portal</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Log out</span>
