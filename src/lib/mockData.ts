@@ -87,7 +87,7 @@ export const courses: Course[] = [
     instructor: 'Dr. Emily Chen',
     credits: 4,
     enrolled: 120,
-    thumbnail: '/placeholder.svg',
+    thumbnail: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
     progress: 68,
     materials: [
       {
@@ -123,7 +123,7 @@ export const courses: Course[] = [
     instructor: 'Prof. Michael Brown',
     credits: 3,
     enrolled: 95,
-    thumbnail: '/placeholder.svg',
+    thumbnail: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
     progress: 42,
     materials: [
       {
@@ -159,7 +159,7 @@ export const courses: Course[] = [
     instructor: 'Dr. Robert Wilson',
     credits: 3,
     enrolled: 85,
-    thumbnail: '/placeholder.svg',
+    thumbnail: 'https://images.unsplash.com/photo-1627398242454-45a1465c2479?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
     progress: 90,
     materials: [
       {
@@ -189,7 +189,7 @@ export const courses: Course[] = [
     instructor: 'Dr. Sarah Johnson',
     credits: 4,
     enrolled: 75,
-    thumbnail: '/placeholder.svg',
+    thumbnail: 'https://images.unsplash.com/photo-1507146153580-69a1fe6d8aa1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80',
     progress: 30,
     materials: [
       {

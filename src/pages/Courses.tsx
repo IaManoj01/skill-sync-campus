@@ -1,12 +1,12 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Search, BookOpen, Users, Award } from "lucide-react";
 import { courses } from "@/lib/mockData";
+import { Award, BookOpen, Search, Users } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Courses = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,7 +49,12 @@ const Courses = () => {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredCourses.map((course) => (
           <Card key={course.id} className="overflow-hidden">
-            <div className="h-40 bg-gray-200 relative">
+            <div className="h-40 relative">
+              <img 
+                src={course.thumbnail} 
+                alt={course.title}
+                className="w-full h-full object-cover"
+              />
               <div className="absolute top-4 right-4 bg-white/80 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium">
                 {course.code}
               </div>
