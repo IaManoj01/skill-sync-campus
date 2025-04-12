@@ -15,6 +15,8 @@ import CodingChallenge from "./pages/CodingChallenge";
 import Analytics from "./pages/Analytics";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import StudentDashboard from "./pages/student/StudentDashboard";
 
 // Layout
 import DashboardLayout from "./components/layouts/DashboardLayout";
@@ -22,15 +24,23 @@ import { useAuth } from "./contexts/AuthContext";
 import { useEffect } from "react";
 
 // Role-based route component
-const RoleBasedRoute = ({ children }: { children: React.ReactNode }) => {
+const RoleBasedRoute = ({ children, requiredRole }: { children: React.ReactNode, requiredRole: 'admin' | 'student' }) => {
   const userRole = localStorage.getItem('userRole') || 'student';
   const { user } = useAuth();
   
   useEffect(() => {
     // If no user is logged in, we won't redirect as the login component will handle that
     if (!user) return;
-  }, [user]);
+    
+    // If user has the wrong role, redirect to the proper portal
+    if (userRole !== requiredRole) {
+      window.location.href = `/${userRole}`;
+    }
+  }, [user, userRole, requiredRole]);
 
+  if (!user) return null;
+  
+  // If user has the correct role, render the children
   return <>{children}</>;
 };
 
@@ -48,11 +58,11 @@ const App = () => (
           
           {/* Admin routes */}
           <Route path="/admin" element={
-            <RoleBasedRoute>
+            <RoleBasedRoute requiredRole="admin">
               <DashboardLayout isAdmin={true} />
             </RoleBasedRoute>
           }>
-            <Route index element={<Dashboard />} />
+            <Route index element={<AdminDashboard />} />
             <Route path="courses" element={<Courses />} />
             <Route path="courses/:courseId" element={<CourseDetail />} />
             <Route path="coding" element={<CodingChallenges />} />
@@ -62,11 +72,11 @@ const App = () => (
           
           {/* Student routes */}
           <Route path="/student" element={
-            <RoleBasedRoute>
+            <RoleBasedRoute requiredRole="student">
               <DashboardLayout isAdmin={false} />
             </RoleBasedRoute>
           }>
-            <Route index element={<Dashboard />} />
+            <Route index element={<StudentDashboard />} />
             <Route path="courses" element={<Courses />} />
             <Route path="courses/:courseId" element={<CourseDetail />} />
             <Route path="coding" element={<CodingChallenges />} />

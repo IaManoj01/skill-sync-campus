@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
-import { UserCog, UserRound } from "lucide-react";
+import { UserCog, UserRound, BookOpen, Users } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -45,8 +45,27 @@ const Index = () => {
             <CardHeader className="pb-4">
               <CardTitle className="text-2xl text-center">Admin Portal</CardTitle>
             </CardHeader>
-            <CardContent className="flex justify-center pb-6">
-              <UserCog className="h-32 w-32 text-blue-600" />
+            <CardContent className="flex flex-col items-center pb-6 space-y-4">
+              <UserCog className="h-24 w-24 text-blue-600" />
+              <div className="text-center space-y-2">
+                <p className="text-gray-700">For instructors and administrators</p>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li className="flex items-center justify-center">
+                    <Users className="h-4 w-4 mr-2" />
+                    <span>Manage student enrollments</span>
+                  </li>
+                  <li className="flex items-center justify-center">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    <span>Create and edit courses</span>
+                  </li>
+                  <li className="flex items-center justify-center">
+                    <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    <span>View analytics and reports</span>
+                  </li>
+                </ul>
+              </div>
             </CardContent>
             <CardFooter className="pt-0">
               <Button 
@@ -64,8 +83,27 @@ const Index = () => {
             <CardHeader className="pb-4">
               <CardTitle className="text-2xl text-center">Student Portal</CardTitle>
             </CardHeader>
-            <CardContent className="flex justify-center pb-6">
-              <UserRound className="h-32 w-32 text-blue-600" />
+            <CardContent className="flex flex-col items-center pb-6 space-y-4">
+              <UserRound className="h-24 w-24 text-blue-600" />
+              <div className="text-center space-y-2">
+                <p className="text-gray-700">For students and learners</p>
+                <ul className="text-sm text-gray-600 space-y-1">
+                  <li className="flex items-center justify-center">
+                    <BookOpen className="h-4 w-4 mr-2" />
+                    <span>Browse and enroll in courses</span>
+                  </li>
+                  <li className="flex items-center justify-center">
+                    <Code className="h-4 w-4 mr-2" />
+                    <span>Practice coding challenges</span>
+                  </li>
+                  <li className="flex items-center justify-center">
+                    <svg className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Track your learning progress</span>
+                  </li>
+                </ul>
+              </div>
             </CardContent>
             <CardFooter className="pt-0">
               <Button 
