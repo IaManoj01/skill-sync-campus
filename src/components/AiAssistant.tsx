@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { MessageSquare, X, Send, Bot } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { sendMessage } from '@/lib/gemini';
+import { Bot, Send } from "lucide-react";
+import { useEffect, useRef, useState } from 'react';
 
 type Message = {
   id: string;
@@ -15,7 +16,6 @@ type Message = {
 };
 
 const AiAssistant = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -24,9 +24,17 @@ const AiAssistant = () => {
       timestamp: new Date(),
     },
   ]);
+  const [isOpen, setIsOpen] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
   const [inputMessage, setInputMessage] = useState('');
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
     
     // Add user message
@@ -40,16 +48,38 @@ const AiAssistant = () => {
     setMessages(prevMessages => [...prevMessages, newUserMessage]);
     setInputMessage('');
     
-    // Simulate AI response (in a real app, this would be an API call)
-    setTimeout(() => {
+    try {
+      // Get response from Gemini API
+      const response = await sendMessage(inputMessage);
+      
       const aiResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: "I'm here to help with any questions about your courses, coding challenges, or academic progress. What would you like to know?",
+        content: response,
         isUser: false,
         timestamp: new Date(),
       };
       setMessages(prevMessages => [...prevMessages, aiResponse]);
-    }, 1000);
+    } catch (error) {
+      let errorContent = "I apologize, but I encountered an error. Please try again later.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes('API key')) {
+          errorContent = "API key is missing or invalid. Please check your configuration.";
+        } else if (error.message.includes('No response received')) {
+          errorContent = "The AI service is currently unavailable. Please try again later.";
+        } else if (error.message.includes('Failed to get response')) {
+          errorContent = "There was a problem connecting to the AI service.";
+        }
+      }
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: errorContent,
+        isUser: false,
+        timestamp: new Date(),
+      };
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
+    }
   };
 
   return (
@@ -74,15 +104,14 @@ const AiAssistant = () => {
                 </Avatar>
                 <SheetTitle>Campus AI Assistant</SheetTitle>
               </div>
-              <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
-                <X className="h-4 w-4" />
-              </Button>
+              
             </div>
           </SheetHeader>
           
           {/* Messages Area */}
           <ScrollArea className="h-[calc(100vh-180px)] p-4">
             <div className="space-y-4">
+              <div ref={scrollRef} />
               {messages.map((message) => (
                 <div 
                   key={message.id}
