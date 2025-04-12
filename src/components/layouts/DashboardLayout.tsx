@@ -15,7 +15,8 @@ import {
   Bell,
   Settings,
   Users,
-  Layers
+  Layers,
+  Database
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -33,14 +34,14 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = ({ isAdmin = false }: DashboardLayoutProps) => {
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
   
-  // Get role from localStorage
-  const userRole = localStorage.getItem('userRole') || 'student';
+  // Get role from localStorage or from profile
+  const userRole = profile?.role || localStorage.getItem('userRole') || 'student';
   const baseUrl = isAdmin ? '/admin' : '/student';
 
   useEffect(() => {
@@ -57,17 +58,16 @@ const DashboardLayout = ({ isAdmin = false }: DashboardLayoutProps) => {
 
   const handleLogout = () => {
     logout();
-    localStorage.removeItem('userRole'); // Clear role on logout
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
     });
-    navigate('/');
   };
 
   const handleSwitchPortal = () => {
-    localStorage.removeItem('userRole'); // Clear role before switching
-    navigate('/');
+    // Changing role will trigger a navigation in auth context
+    localStorage.setItem('userRole', isAdmin ? 'student' : 'admin');
+    navigate(isAdmin ? '/student' : '/admin');
   };
 
   if (!user) return null;
@@ -75,6 +75,7 @@ const DashboardLayout = ({ isAdmin = false }: DashboardLayoutProps) => {
   // Different navigation items based on role
   const adminNavItems = [
     { icon: <Users className="w-5 h-5 mr-3" />, label: 'Manage Users', path: `${baseUrl}/users` },
+    { icon: <Database className="w-5 h-5 mr-3" />, label: 'User Data', path: `${baseUrl}/user-data` },
     { icon: <BookOpen className="w-5 h-5 mr-3" />, label: 'Courses', path: `${baseUrl}/courses` },
     { icon: <Code className="w-5 h-5 mr-3" />, label: 'Coding Challenges', path: `${baseUrl}/coding` },
     { icon: <BarChart3 className="w-5 h-5 mr-3" />, label: 'Analytics', path: `${baseUrl}/analytics` },
@@ -173,24 +174,26 @@ const DashboardLayout = ({ isAdmin = false }: DashboardLayoutProps) => {
               </li>
             ))}
 
-            {/* Option to switch portals */}
-            <li className="mt-6">
-              <Button 
-                variant="outline" 
-                className="w-full justify-start" 
-                onClick={handleSwitchPortal}
-              >
-                <svg 
-                  className="w-5 h-5 mr-3" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
+            {/* Option to switch portals if user has admin privileges */}
+            {(profile?.role === 'admin' || localStorage.getItem('userRole') === 'admin') && (
+              <li className="mt-6">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start" 
+                  onClick={handleSwitchPortal}
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
-                Switch Portal
-              </Button>
-            </li>
+                  <svg 
+                    className="w-5 h-5 mr-3" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                  Switch to {isAdmin ? 'Student' : 'Admin'} Portal
+                </Button>
+              </li>
+            )}
           </ul>
         </nav>
 
@@ -199,12 +202,12 @@ const DashboardLayout = ({ isAdmin = false }: DashboardLayoutProps) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Avatar>
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={profile?.avatar_url || ''} alt={profile?.full_name || user.email} />
+                <AvatarFallback>{profile?.full_name?.charAt(0) || user.email?.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-700">{user.name}</p>
-                <p className="text-xs text-gray-500 capitalize">{isAdmin ? 'Administrator' : 'Student'}</p>
+                <p className="text-sm font-medium text-gray-700">{profile?.full_name || user.email}</p>
+                <p className="text-xs text-gray-500 capitalize">{profile?.role || userRole}</p>
               </div>
             </div>
             <Button
@@ -235,8 +238,8 @@ const DashboardLayout = ({ isAdmin = false }: DashboardLayoutProps) => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="relative rounded-full h-8 w-8">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar} alt={user.name} />
-                      <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      <AvatarImage src={profile?.avatar_url || ''} alt={profile?.full_name || user.email} />
+                      <AvatarFallback>{profile?.full_name?.charAt(0) || user.email?.charAt(0)}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
@@ -247,17 +250,19 @@ const DashboardLayout = ({ isAdmin = false }: DashboardLayoutProps) => {
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={handleSwitchPortal}>
-                    <svg 
-                      className="mr-2 h-4 w-4"
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                    </svg>
-                    <span>Switch Portal</span>
-                  </DropdownMenuItem>
+                  {(profile?.role === 'admin' || localStorage.getItem('userRole') === 'admin') && (
+                    <DropdownMenuItem onClick={handleSwitchPortal}>
+                      <svg 
+                        className="mr-2 h-4 w-4"
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                      </svg>
+                      <span>Switch to {isAdmin ? 'Student' : 'Admin'} Portal</span>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
