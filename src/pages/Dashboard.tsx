@@ -1,21 +1,26 @@
 
-import { Link } from "react-router-dom";
-import { 
-  BookOpen, 
-  Code, 
-  Clock, 
-  Award, 
-  CheckCircle,
-  AlertTriangle
-} from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
-import { courses, codingChallenges, skillMetrics } from "@/lib/mockData";
 import { useAuth } from "@/contexts/AuthContext";
+import { codingChallenges, courses, skillMetrics } from "@/lib/mockData";
+import {
+  AlertTriangle,
+  Award,
+  BookOpen,
+  CheckCircle,
+  Clock,
+  Code
+} from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const location = useLocation();
+  
+  // Determine if we're in admin or student route
+  const isAdminRoute = location.pathname.startsWith('/admin');
+  const baseRoute = isAdminRoute ? '/admin' : '/student';
 
   // Get enrolled courses (in a real app, this would be filtered by user)
   const enrolledCourses = courses.slice(0, 3);
@@ -129,7 +134,7 @@ const Dashboard = () => {
           </CardContent>
           <CardFooter>
             <Button variant="outline" asChild className="w-full">
-              <Link to="/courses">View All Courses</Link>
+              <Link to={`${baseRoute}/courses`}>View All Courses</Link>
             </Button>
           </CardFooter>
         </Card>
@@ -165,7 +170,7 @@ const Dashboard = () => {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Coding Challenges</h2>
           <Button variant="outline" asChild>
-            <Link to="/coding">View All</Link>
+            <Link to={`${baseRoute}/coding`}>View All</Link>
           </Button>
         </div>
 
@@ -199,7 +204,7 @@ const Dashboard = () => {
               </CardContent>
               <CardFooter>
                 <Button asChild className="w-full">
-                  <Link to={`/coding/${challenge.id}`}>Solve Challenge</Link>
+                  <Link to={`${baseRoute}/coding/${challenge.id}`}>Solve Challenge</Link>
                 </Button>
               </CardFooter>
             </Card>

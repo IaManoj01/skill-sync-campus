@@ -1,9 +1,7 @@
 
-import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CodingStatsTab } from "@/components/analytics/CodingStatsTab";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -11,21 +9,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/hooks/use-toast";
+import { codingChallenges, CodingChallenge as CodingChallengeType } from "@/lib/mockData";
 import {
   ArrowLeft,
-  Play,
-  Save,
-  Code,
-  Terminal,
-  ListChecks,
-  RotateCcw,
-  HelpCircle,
   CheckCircle,
-  XCircle,
   Clock,
+  HelpCircle,
+  ListChecks,
+  Play,
+  RotateCcw,
+  XCircle
 } from "lucide-react";
-import { codingChallenges, CodingChallenge as CodingChallengeType } from "@/lib/mockData";
-import { useToast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 
 const CodingChallenge = () => {
   const { challengeId } = useParams<{ challengeId: string }>();
@@ -179,103 +177,117 @@ const CodingChallenge = () => {
 
       <div className="grid gap-4 lg:grid-cols-2">
         {/* Problem description */}
-        <div className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Problem Description</CardTitle>
-            </CardHeader>
-            <CardContent className="prose max-w-none">
-              <p>{challenge.description}</p>
-              
-              <h3 className="text-lg font-medium mt-6">Examples</h3>
-              {challenge.test_cases.filter(test => !test.isHidden).map((test, idx) => (
-                <div key={idx} className="mb-4 p-3 bg-gray-50 rounded-md">
-                  <div className="mb-2">
-                    <strong>Input:</strong> <code>{test.input}</code>
-                  </div>
-                  <div>
-                    <strong>Output:</strong> <code>{test.output}</code>
-                  </div>
-                </div>
-              ))}
+        <Tabs defaultValue="problem" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-3 md:w-auto md:inline-flex">
+            <TabsTrigger value="problem">Problem</TabsTrigger>
+            <TabsTrigger value="stats">Statistics</TabsTrigger>
+            <TabsTrigger value="tests">Tests</TabsTrigger>
+          </TabsList>
 
-              <div className="flex flex-wrap gap-1 mt-6">
-                {challenge.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs bg-gray-100 px-2 py-1 rounded-full"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Test Results</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {testResults.length > 0 ? (
-                <div className="space-y-3">
-                  {testResults.map((result, idx) => (
-                    <div
-                      key={idx}
-                      className={`p-3 rounded-md ${
-                        result.passed ? "bg-green-50" : "bg-red-50"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium">Test Case {idx + 1}</span>
-                        {result.passed ? (
-                          <div className="flex items-center text-green-600">
-                            <CheckCircle className="h-4 w-4 mr-1" />
-                            Passed
-                          </div>
-                        ) : (
-                          <div className="flex items-center text-red-600">
-                            <XCircle className="h-4 w-4 mr-1" />
-                            Failed
-                          </div>
-                        )}
-                      </div>
-                      <div className="text-sm">
-                        <div>
-                          <span className="font-medium">Input:</span>{" "}
-                          <code className="bg-gray-100 px-1 py-0.5 rounded">
-                            {result.input}
-                          </code>
-                        </div>
-                        <div>
-                          <span className="font-medium">Expected:</span>{" "}
-                          <code className="bg-gray-100 px-1 py-0.5 rounded">
-                            {result.expected}
-                          </code>
-                        </div>
-                        {!result.passed && (
-                          <div>
-                            <span className="font-medium">Your Output:</span>{" "}
-                            <code className="bg-gray-100 px-1 py-0.5 rounded">
-                              {result.output}
-                            </code>
-                          </div>
-                        )}
-                      </div>
+          <TabsContent value="problem" className="space-y-4 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Problem Description</CardTitle>
+              </CardHeader>
+              <CardContent className="prose max-w-none">
+                <p>{challenge.description}</p>
+                
+                <h3 className="text-lg font-medium mt-6">Examples</h3>
+                {challenge.test_cases.filter(test => !test.isHidden).map((test, idx) => (
+                  <div key={idx} className="mb-4 p-3 bg-gray-50 rounded-md">
+                    <div className="mb-2">
+                      <strong>Input:</strong> <code>{test.input}</code>
                     </div>
+                    <div>
+                      <strong>Output:</strong> <code>{test.output}</code>
+                    </div>
+                  </div>
+                ))}
+
+                <div className="flex flex-wrap gap-1 mt-6">
+                  {challenge.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-xs bg-gray-100 px-2 py-1 rounded-full"
+                    >
+                      {tag}
+                    </span>
                   ))}
                 </div>
-              ) : (
-                <div className="text-center py-6">
-                  <ListChecks className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Run tests to see the results
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="stats" className="mt-6">
+            <CodingStatsTab />
+          </TabsContent>
+
+          <TabsContent value="tests" className="space-y-4 mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Test Results</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {testResults.length > 0 ? (
+                  <div className="space-y-3">
+                    {testResults.map((result, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-3 rounded-md ${
+                          result.passed ? "bg-green-50" : "bg-red-50"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium">Test Case {idx + 1}</span>
+                          {result.passed ? (
+                            <div className="flex items-center text-green-600">
+                              <CheckCircle className="h-4 w-4 mr-1" />
+                              Passed
+                            </div>
+                          ) : (
+                            <div className="flex items-center text-red-600">
+                              <XCircle className="h-4 w-4 mr-1" />
+                              Failed
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-sm">
+                          <div>
+                            <span className="font-medium">Input:</span>{" "}
+                            <code className="bg-gray-100 px-1 py-0.5 rounded">
+                              {result.input}
+                            </code>
+                          </div>
+                          <div>
+                            <span className="font-medium">Expected:</span>{" "}
+                            <code className="bg-gray-100 px-1 py-0.5 rounded">
+                              {result.expected}
+                            </code>
+                          </div>
+                          {!result.passed && (
+                            <div>
+                              <span className="font-medium">Your Output:</span>{" "}
+                              <code className="bg-gray-100 px-1 py-0.5 rounded">
+                                {result.output}
+                              </code>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <ListChecks className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">
+                      Run tests to see the results
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
         {/* Code editor and output */}
         <div className="space-y-4">

@@ -1,13 +1,13 @@
 
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Lock, Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -40,7 +40,18 @@ const Login = () => {
           title: "Success",
           description: "You are now logged in.",
         });
-        navigate("/");
+        
+        // Check if user role is stored in localStorage
+        const userRole = localStorage.getItem('userRole');
+        
+        // If role exists, redirect to the appropriate dashboard
+        if (userRole === 'admin' || userRole === 'student') {
+          navigate(`/${userRole}`);
+        } else {
+          // If no role is set, default to student role and redirect
+          localStorage.setItem('userRole', 'student');
+          navigate('/student');
+        }
       } else {
         toast({
           title: "Error",
