@@ -1,22 +1,58 @@
-# Welcome to your Lovable project
 
-## Project info
+# Campus Bridge
 
-**URL**: https://lovable.dev/projects/e1d3e3be-8bf1-40df-ac8a-8f54ec1b8953
+## Project Title
+Campus Bridge – Integrated Academic LMS + Coding Skill Development Platform
 
-## How can I edit this code?
+## Selected Domain
+Web Development
 
-There are several ways of editing your application.
+## Problem Statement / Use Case
+Build a unified web application that functions as an end-to-end academic and coding skill development environment for university students. The platform should integrate:
+- LMS capabilities to manage academic courses, attendance, assessments, and faculty interaction (ex: My Camu)
+- Coding training modules with an online compiler, structured learning paths, problem-solving tracks, and performance analytics just like Talentio.
 
-**Use Lovable**
+## Abstract / Problem Description
+University students often struggle with fragmented learning experiences, using separate platforms for academic coursework and coding skill development. This disconnection creates inefficiencies, inconsistent user experiences, and missed opportunities for integrated learning analytics. SkillSync Campus addresses this challenge by creating a unified platform that seamlessly combines traditional Learning Management System (LMS) functionality with specialized coding education tools.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e1d3e3be-8bf1-40df-ac8a-8f54ec1b8953) and start prompting.
+The platform enables students to access academic course materials, submit assignments, track attendance, and interact with faculty while simultaneously developing coding skills through structured learning paths, interactive coding challenges, and real-time compiler feedback. Faculty can monitor student progress across both academic and coding domains, providing targeted interventions based on comprehensive performance analytics. This integrated approach enhances the educational experience, streamlines administrative processes, and better prepares students for technical careers by directly connecting academic learning with practical coding skills.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Tech Stack Used
+This project is built with:
+
+- Vite - Fast build tool and development server
+- TypeScript - Type-safe JavaScript superset
+- React - Frontend UI library
+- React Router - Client-side routing
+- Tailwind CSS - Utility-first CSS framework
+- MongoDB - NoSQL database for flexible data storage
+- React Query - Data fetching and state management
+
+
+## Project Explanation
+SkillSync Campus is designed as a comprehensive educational platform with two main integrated components:
+
+1. **Academic LMS Module**:
+   - Course management with syllabus, materials, and resources
+   - Attendance tracking and reporting
+   - Assignment submission and grading
+   - Faculty-student communication channels
+   - Academic performance analytics
+
+2. **Coding Skill Development Module**:
+   - Interactive coding environment with online compiler
+   - Structured learning paths for different programming languages
+   - Problem-solving tracks with increasing difficulty levels
+   - Real-time code validation and feedback
+   - Coding performance analytics and progress tracking
+
+The platform features a unified dashboard that provides students with a holistic view of their academic and coding progress, while giving faculty insights into student performance across both domains. The integration of these components creates a seamless educational experience that bridges theoretical academic learning with practical coding skills development.
+
+## Development Setup
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+If you want to work locally using your own IDE, you can clone this repo and push changes.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -50,24 +86,5 @@ npm run dev
 - Click on "New codespace" to launch a new Codespace environment.
 - Edit files directly within the Codespace and commit and push your changes once you're done.
 
-## What technologies are used for this project?
 
-This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/e1d3e3be-8bf1-40df-ac8a-8f54ec1b8953) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
