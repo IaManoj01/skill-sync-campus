@@ -4,6 +4,8 @@
 ## Project Title
 Campus Bridge – Integrated Academic LMS + Coding Skill Development Platform
 
+![image](assets/Login.png)
+
 ## Selected Domain
 Web Development
 
@@ -21,13 +23,13 @@ The platform enables students to access academic course materials, submit assign
 This project is built with:
 
 - Vite - Fast build tool and development server
-- TypeScript - Type-safe JavaScript superset
 - React - Frontend UI library
+- Gemini AI - For chatbot integration
+- TypeScript - Type-safe JavaScript superset
 - React Router - Client-side routing
 - Tailwind CSS - Utility-first CSS framework
 - MongoDB - NoSQL database for flexible data storage
 - React Query - Data fetching and state management
-
 
 ## Project Explanation
 SkillSync Campus is designed as a comprehensive educational platform with two main integrated components:
@@ -39,6 +41,8 @@ SkillSync Campus is designed as a comprehensive educational platform with two ma
    - Faculty-student communication channels
    - Academic performance analytics
 
+![image](assets/ChatBot.png)
+
 2. **Coding Skill Development Module**:
    - Interactive coding environment with online compiler
    - Structured learning paths for different programming languages
@@ -46,7 +50,11 @@ SkillSync Campus is designed as a comprehensive educational platform with two ma
    - Real-time code validation and feedback
    - Coding performance analytics and progress tracking
 
+![image](assets/Advance%20Searching.png)
+
 The platform features a unified dashboard that provides students with a holistic view of their academic and coding progress, while giving faculty insights into student performance across both domains. The integration of these components creates a seamless educational experience that bridges theoretical academic learning with practical coding skills development.
+
+
 
 ## Development Setup
 
