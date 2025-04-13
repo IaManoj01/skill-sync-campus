@@ -12,6 +12,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { codingChallenges, CodingChallenge as CodingChallengeType } from "@/lib/mockData";
+import MonacoEditor from "@monaco-editor/react";
 import {
   ArrowLeft,
   CheckCircle,
@@ -28,6 +29,7 @@ import { Link, useParams } from "react-router-dom";
 const CodingChallenge = () => {
   const { challengeId } = useParams<{ challengeId: string }>();
   const [challenge, setChallenge] = useState<CodingChallengeType | null>(null);
+  const [isEditorReady, setIsEditorReady] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("");
   const [code, setCode] = useState<string>("");
   const [output, setOutput] = useState<string>("");
@@ -42,10 +44,13 @@ const CodingChallenge = () => {
     const foundChallenge = codingChallenges.find((c) => c.id === challengeId);
     if (foundChallenge) {
       setChallenge(foundChallenge);
-      // Set default language to the first available language
+      // Set default language to Java if available, otherwise first language
       if (foundChallenge.languages.length > 0) {
-        setSelectedLanguage(foundChallenge.languages[0]);
-        setCode(foundChallenge.starter_code[foundChallenge.languages[0]] || "");
+        const preferredLanguage = foundChallenge.languages.includes('Java') 
+          ? 'Java' 
+          : foundChallenge.languages[0];
+        setSelectedLanguage(preferredLanguage);
+        setCode(foundChallenge.starter_code[preferredLanguage] || "");
       }
     }
   }, [challengeId]);
@@ -61,14 +66,47 @@ const CodingChallenge = () => {
     setIsRunning(true);
     setOutput("");
     
-    // Simulate code execution (would be an API call to a real code execution service)
+    // Use our code validation service to run the code with a sample input
     setTimeout(() => {
-      setOutput("Running your code...\n\nCompilation successful!\n\nOutput:\nYour solution is working for basic inputs.");
-      setIsRunning(false);
-      
-      toast({
-        title: "Code executed successfully",
-        description: "Your code ran without errors.",
+      // Import the validation function
+      import("@/lib/codeValidation").then(({ validateCode }) => {
+        if (!challenge) return;
+        
+        // Use the first test case as a sample input
+        const sampleTest = challenge.test_cases[0];
+        const result = validateCode(
+          code,
+          selectedLanguage,
+          sampleTest.input,
+          sampleTest.output
+        );
+        
+        if (result.error) {
+          setOutput(`Running your code...\n\nError: ${result.error}\n\nPlease check your code and try again.`);
+          toast({
+            title: "Code execution failed",
+            description: "There was an error executing your code.",
+            variant: "destructive",
+          });
+        } else {
+          setOutput(`Running your code...\n\nCompilation successful!\n\nInput: ${result.input}\nYour Output: ${result.output}\nExpected: ${result.expected}\n\n${result.passed ? "✅ Your solution is correct!" : "❌ Your solution is incorrect."}`);
+          toast({
+            title: result.passed ? "Code executed successfully" : "Code executed with issues",
+            description: result.passed ? "Your code ran without errors and produced the correct output." : "Your code ran without errors but produced incorrect output.",
+            variant: result.passed ? "default" : "destructive",
+          });
+        }
+        
+        setIsRunning(false);
+      }).catch(error => {
+        console.error("Error running code:", error);
+        setOutput("Error running your code. Please try again.");
+        setIsRunning(false);
+        toast({
+          title: "Error running code",
+          description: "There was an error running your code. Please try again.",
+          variant: "destructive",
+        });
       });
     }, 1500);
   };
@@ -77,31 +115,41 @@ const CodingChallenge = () => {
     setIsRunning(true);
     setTestResults([]);
     
-    // Simulate test execution
+    // Use our code validation service to validate the code
     setTimeout(() => {
       if (!challenge) return;
       
-      const simResults = challenge.test_cases.map((testCase) => {
-        // Randomly determine if test passes for demo purposes
-        const passed = Math.random() > 0.3;
-        return {
-          passed,
-          input: testCase.input,
-          output: "Your output",
-          expected: testCase.output,
-        };
-      });
+      // Import the validation function
+      import("@/lib/codeValidation").then(({ validateCode }) => {
+        const simResults = challenge.test_cases.map((testCase) => {
+          // Use our validation service to validate the code
+          return validateCode(
+            code,
+            selectedLanguage,
+            testCase.input,
+            testCase.output
+          );
+        });
       
-      setTestResults(simResults);
-      setIsRunning(false);
-      
-      const passedCount = simResults.filter(r => r.passed).length;
-      toast({
-        title: `${passedCount} of ${simResults.length} tests passed`,
-        description: passedCount === simResults.length 
-          ? "Great job! All tests passed." 
-          : "Some tests failed. Check the results for details.",
-        variant: passedCount === simResults.length ? "default" : "destructive",
+        setTestResults(simResults);
+        setIsRunning(false);
+        
+        const passedCount = simResults.filter(r => r.passed).length;
+        toast({
+          title: `${passedCount} of ${simResults.length} tests passed`,
+          description: passedCount === simResults.length 
+            ? "Great job! All tests passed." 
+            : "Some tests failed. Check the results for details.",
+          variant: passedCount === simResults.length ? "default" : "destructive",
+        });
+      }).catch(error => {
+        console.error("Error validating code:", error);
+        setIsRunning(false);
+        toast({
+          title: "Error validating code",
+          description: "There was an error validating your code. Please try again.",
+          variant: "destructive",
+        });
       });
     }, 2000);
   };
@@ -311,11 +359,28 @@ const CodingChallenge = () => {
             </CardHeader>
             <CardContent className="p-0">
               <div className="border-t">
-                <textarea
-                  className="w-full h-96 p-4 font-mono text-sm bg-gray-50 focus:outline-none resize-none code-editor"
+                <MonacoEditor
+                  height="24rem"
+                  language={selectedLanguage.toLowerCase()}
+                  theme="vs-dark"
                   value={code}
-                  onChange={(e) => setCode(e.target.value)}
-                  spellCheck={false}
+                  onChange={(value) => setCode(value || '')}
+                  options={{
+                    minimap: { enabled: false },
+                    scrollBeyondLastLine: false,
+                    fontSize: 14,
+                    wordWrap: 'on',
+                    automaticLayout: true,
+                    suggest: {
+                      showKeywords: true,
+                      snippetsPreventQuickSuggestions: false
+                    },
+                    quickSuggestions: {
+                      other: true,
+                      comments: true,
+                      strings: true
+                    }
+                  }}
                 />
               </div>
             </CardContent>

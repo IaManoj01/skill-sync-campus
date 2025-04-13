@@ -10,7 +10,8 @@ import {
   BookOpen,
   CheckCircle,
   Clock,
-  Code
+  Code,
+  User
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -52,11 +53,26 @@ const Dashboard = () => {
   return (
     <div className="space-y-8">
       {/* Welcome section */}
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.name.split(' ')[0]}!</h1>
-        <p className="text-muted-foreground">
-          Here's an overview of your academic and coding progress.
-        </p>
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <h1 className="text-3xl font-bold tracking-tight">Welcome back, {user?.name.split(' ')[0]}!</h1>
+          <p className="text-muted-foreground">
+            Here's an overview of your academic and coding progress.
+          </p>
+        </div>
+        <Link to={`${baseRoute}/profile`} className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+          <div className="h-12 w-12 rounded-full bg-secondary flex items-center justify-center overflow-hidden">
+            {user?.photoURL ? (
+              <img 
+                src={user.photoURL} 
+                alt="Profile" 
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <User className="h-6 w-6 text-muted-foreground" />
+            )}
+          </div>
+        </Link>
       </div>
 
       {/* Stats overview */}

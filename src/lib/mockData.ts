@@ -6,6 +6,7 @@ export interface User {
   email: string;
   role: 'student' | 'faculty' | 'admin';
   avatar?: string;
+  photoURL?: string;
 }
 
 export interface Course {
@@ -217,6 +218,32 @@ export const codingChallenges: CodingChallenge[] = [
     id: 'cc1',
     title: 'Two Sum',
     difficulty: 'easy',
+    description: 'Given an array of integers, return indices of the two numbers such that they add up to a specific target.',
+    category: 'Algorithms',
+    tags: ['array', 'hash table'],
+    languages: ['java', 'python', 'c++', 'javascript'],
+    starter_code: {
+      java: 'class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        // Your code here\n    }\n}',
+      python: 'def twoSum(nums, target):\n    # Your code here\n    pass',
+      cpp: 'class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        // Your code here\n    }\n};',
+      javascript: 'function twoSum(nums, target) {\n    // Your code here\n};'
+    },
+    test_cases: [
+      { input: '[2,7,11,15]\n9', output: '[0,1]', isHidden: false },
+      { input: '[3,2,4]\n6', output: '[1,2]', isHidden: false },
+      { input: '[3,3]\n6', output: '[0,1]', isHidden: true }
+    ],
+    solution_code: {
+      java: 'class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        Map<Integer, Integer> map = new HashMap<>();\n        for (int i = 0; i < nums.length; i++) {\n            int complement = target - nums[i];\n            if (map.containsKey(complement)) {\n                return new int[] { map.get(complement), i };\n            }\n            map.put(nums[i], i);\n        }\n        throw new IllegalArgumentException("No two sum solution");\n    }\n}',
+      python: 'def twoSum(nums, target):\n    hashmap = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in hashmap:\n            return [hashmap[complement], i]\n        hashmap[num] = i\n    return []',
+      cpp: 'class Solution {\npublic:\n    vector<int> twoSum(vector<int>& nums, int target) {\n        unordered_map<int, int> map;\n        for (int i = 0; i < nums.size(); i++) {\n            int complement = target - nums[i];\n            if (map.find(complement) != map.end()) {\n                return {map[complement], i};\n            }\n            map[nums[i]] = i;\n        }\n        return {};\n    }\n};',
+      javascript: 'function twoSum(nums, target) {\n    const map = new Map();\n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        if (map.has(complement)) {\n            return [map.get(complement), i];\n        }\n        map.set(nums[i], i);\n    }\n    return [];\n};'
+    }
+  },
+  {
+    id: 'cc4',
+    title: 'Two Sum (Alternative)',
+    difficulty: 'easy',
     description: 'Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.',
     category: 'Arrays',
     tags: ['arrays', 'hash table'],
@@ -225,7 +252,13 @@ export const codingChallenges: CodingChallenge[] = [
       python: 'def two_sum(nums, target):\n    # Your code here\n    pass',
       java: 'public int[] twoSum(int[] nums, int target) {\n    // Your code here\n    return null;\n}',
       javascript: 'function twoSum(nums, target) {\n    // Your code here\n}',
-      'c++': 'vector<int> twoSum(vector<int>& nums, int target) {\n    // Your code here\n}'
+      cpp: 'vector<int> twoSum(vector<int>& nums, int target) {\n    // Your code here\n}'
+    },
+    solution_code: {
+      python: 'def two_sum(nums, target):\n    hashmap = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in hashmap:\n            return [hashmap[complement], i]\n        hashmap[num] = i\n    return []',
+      java: 'public int[] twoSum(int[] nums, int target) {\n    Map<Integer, Integer> map = new HashMap<>();\n    for (int i = 0; i < nums.length; i++) {\n        int complement = target - nums[i];\n        if (map.containsKey(complement)) {\n            return new int[] { map.get(complement), i };\n        }\n        map.put(nums[i], i);\n    }\n    throw new IllegalArgumentException(\"No two sum solution\");\n}',
+      javascript: 'function twoSum(nums, target) {\n    const map = new Map();\n    for (let i = 0; i < nums.length; i++) {\n        const complement = target - nums[i];\n        if (map.has(complement)) {\n            return [map.get(complement), i];\n        }\n        map.set(nums[i], i);\n    }\n    return [];\n}',
+      cpp: 'vector<int> twoSum(vector<int>& nums, int target) {\n    unordered_map<int, int> map;\n    for (int i = 0; i < nums.size(); i++) {\n        int complement = target - nums[i];\n        if (map.find(complement) != map.end()) {\n            return {map[complement], i};\n        }\n        map[nums[i]] = i;\n    }\n    return {};\n}'
     },
     test_cases: [
       {
@@ -254,10 +287,10 @@ export const codingChallenges: CodingChallenge[] = [
     tags: ['linked list', 'recursion'],
     languages: ['python', 'java', 'javascript', 'c++'],
     starter_code: {
-      python: 'def reverse_list(head):\n    # Your code here\n    pass',
-      java: 'public ListNode reverseList(ListNode head) {\n    // Your code here\n    return null;\n}',
-      javascript: 'function reverseList(head) {\n    // Your code here\n}',
-      'c++': 'ListNode* reverseList(ListNode* head) {\n    // Your code here\n}'
+      python: 'def reverse_list(head):\n    prev = None\n    current = head\n    while current:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev',
+      java: 'public ListNode reverseList(ListNode head) {\n    ListNode prev = null;\n    ListNode current = head;\n    while (current != null) {\n        ListNode next = current.next;\n        current.next = prev;\n        prev = current;\n        current = next;\n    }\n    return prev;\n}',
+      javascript: 'function reverseList(head) {\n    let prev = null;\n    let current = head;\n    while (current) {\n        const next = current.next;\n        current.next = prev;\n        prev = current;\n        current = next;\n    }\n    return prev;\n}',
+      cpp: 'ListNode* reverseList(ListNode* head) {\n    ListNode* prev = nullptr;\n    ListNode* current = head;\n    while (current) {\n        ListNode* next = current->next;\n        current->next = prev;\n        prev = current;\n        current = next;\n    }\n    return prev;\n}'
     },
     test_cases: [
       {
@@ -281,11 +314,12 @@ export const codingChallenges: CodingChallenge[] = [
     tags: ['stack', 'string'],
     languages: ['python', 'java', 'javascript', 'c++'],
     starter_code: {
-      python: 'def is_valid(s):\n    # Your code here\n    pass',
-      java: 'public boolean isValid(String s) {\n    // Your code here\n    return false;\n}',
-      javascript: 'function isValid(s) {\n    // Your code here\n}',
-      'c++': 'bool isValid(string s) {\n    // Your code here\n}'
-    },
+      python: 'def is_valid(s):\n    stack = []\n    mapping = {\')\': \'(\', \'}\': \'{\', \']\': \'[\'}\n    for char in s:\n        if char in mapping:\n            top = stack.pop() if stack else \'#\'\n            if mapping[char] != top:\n                return False\n        else:\n            stack.append(char)\n    return not stack',
+      java: 'public boolean isValid(String s) {\n    Stack<Character> stack = new Stack<>();\n    for (char c : s.toCharArray()) {\n        if (c == \'(\' || c == \'[\' || c == \'{\') {\n            stack.push(c);\n        } else {\n            if (stack.isEmpty()) return false;\n            char top = stack.pop();\n            if ((c == \')\' && top != \'(\') || \n                (c == \']\' && top != \'[\') || \n                (c == \'}\' && top != \'{\')) {\n                return false;\n            }\n        }\n    }\n    return stack.isEmpty();\n}',
+      javascript: 'function isValid(s) {\n    const stack = [];\n    const map = {\')\': \'(\', \'}\': \'{\', \']\': \'[\'};\n    for (const char of s) {\n        if (char in map) {\n            const top = stack.pop();\n            if (map[char] !== top) return false;\n        } else {\n            stack.push(char);\n        }\n    }\n    return stack.length === 0;\n}',
+      cpp: 'bool isValid(string s) {\n    stack<char> st;\n    for (char c : s) {\n        if (c == \'(\' || c == \'[\' || c == \'{\') {\n            st.push(c);\n        } else {\n            if (st.empty()) return false;\n            char top = st.top();\n            st.pop();\n            if ((c == \')\' && top != \'(\') || \n                (c == \']\' && top != \'[\') || \n                (c == \'}\' && top != \'{\')) {\n                return false;\n            }\n        }\n    }\n    return st.empty();\n}',
+      typescript: 'function isValid(s: string): boolean {\n    const stack: string[] = [];\n    const map: { [key: string]: string } = {\n        \')\': \'(\',\n        \'}\': \'{\',\n        \']\': \'[\'\n    };\n\n    for (const char of s) {\n        if (char in map) {\n            const top = stack.pop() || \'#\';\n            if (map[char] !== top) {\n                return false;\n            }\n        } else {\n            stack.push(char);\n        }\n    }\n\n    return stack.length === 0;\n}'
+    },    
     test_cases: [
       {
         input: '()',
